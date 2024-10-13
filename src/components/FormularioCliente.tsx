@@ -53,10 +53,10 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-gray-50 p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{datosIniciales ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h2>
+    <form onSubmit={handleSubmit} className="space-y-5 bg-gray-50 p-8 rounded-lg shadow">
+      <h2 className="text-2xl font-semibold mb-6">{datosIniciales ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h2>
       <div>
-        <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre</label>
+        <label htmlFor="nombre" className="block text-base font-medium text-gray-700 mb-1">Nombre</label>
         <input
           type="text"
           id="nombre"
@@ -64,11 +64,11 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
           value={formData.nombre}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-base py-2 px-3"
         />
       </div>
       <div>
-        <label htmlFor="empresa" className="block text-sm font-medium text-gray-700">Empresa</label>
+        <label htmlFor="empresa" className="block text-base font-medium text-gray-700 mb-1">Empresa</label>
         <input
           type="text"
           id="empresa"
@@ -76,11 +76,11 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
           value={formData.empresa}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-base py-2 px-3"
         />
       </div>
       <div>
-        <label htmlFor="montoCredito" className="block text-sm font-medium text-gray-700">Monto de Crédito</label>
+        <label htmlFor="montoCredito" className="block text-base font-medium text-gray-700 mb-1">Monto de Crédito</label>
         <input
           type="number"
           id="montoCredito"
@@ -89,17 +89,17 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
           onChange={handleChange}
           required
           min="0"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-base py-2 px-3"
         />
       </div>
       <div>
-        <label htmlFor="estadoCredito" className="block text-sm font-medium text-gray-700">Estado del Crédito</label>
+        <label htmlFor="estadoCredito" className="block text-base font-medium text-gray-700 mb-1">Estado del Crédito</label>
         <select
           id="estadoCredito"
           name="estadoCredito"
           value={formData.estadoCredito}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-base py-2 px-3"
         >
           <option value="pendiente">Pendiente</option>
           <option value="aprobado">Aprobado</option>
@@ -108,7 +108,7 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
       </div>
       <button
         type="submit"
-        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         {datosIniciales ? 'Actualizar Cliente' : 'Agregar Cliente'}
       </button>

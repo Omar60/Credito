@@ -4,6 +4,7 @@ import ListaClientes from './components/ListaClientes';
 import ResumenComisiones from './components/ResumenComisiones';
 import { Cliente } from './types';
 import { CreditCard, Search } from 'lucide-react';
+import { saveClientes, loadClientes } from './utils/storage';
 
 const App: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -15,14 +16,14 @@ const App: React.FC = () => {
   const [fechaFin, setFechaFin] = useState('');
 
   useEffect(() => {
-    const clientesGuardados = localStorage.getItem('clientes');
+    const clientesGuardados = loadClientes();
     if (clientesGuardados) {
-      setClientes(JSON.parse(clientesGuardados));
+      setClientes(clientesGuardados);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('clientes', JSON.stringify(clientes));
+    saveClientes(clientes);
   }, [clientes]);
 
   const handleAgregarCliente = (nuevoCliente: Omit<Cliente, 'id' | 'fechaCreacion' | 'comision' | 'comisionPagada'>) => {
@@ -60,6 +61,10 @@ const App: React.FC = () => {
     setClientes(clientes.map(c => c.id === id ? { ...c, comisionPagada: pagada } : c));
   };
 
+  const handleMarcarTodasComisionesCobradas = () => {
+    setClientes(clientes.map(c => ({ ...c, comisionPagada: true })));
+  };
+
   const clientesFiltrados = clientes.filter(cliente => {
     const cumpleFiltroEstado = filtro === 'todos' || cliente.estadoCredito === filtro;
     const cumpleBusqueda = cliente.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -73,18 +78,18 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto w-full px-4">
+      <div className="relative py-3 sm:max-w-xl md:max-w-2xl lg:max-w-5xl xl:max-w-7xl mx-auto w-full px-4">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
         <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
           <div className="max-w-full mx-auto">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-5">
-                <CreditCard className="h-14 w-14 text-blue-500" />
-                <div className="text-2xl font-bold">Sistema de Gestión de Crédito</div>
+                <CreditCard className="h-16 w-16 text-blue-500" />
+                <div className="text-3xl font-bold">Sistema de Gestión de Crédito</div>
               </div>
               <button
                 onClick={() => setMostrarFormulario(!mostrarFormulario)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                className="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-600 transition-colors"
               >
                 {mostrarFormulario ? 'Cerrar' : 'Agregar Cliente'}
               </button>
@@ -94,7 +99,7 @@ const App: React.FC = () => {
                 <select
                   value={filtro}
                   onChange={(e) => setFiltro(e.target.value as any)}
-                  className="w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full py-3 px-4 text-lg border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="todos">Todos</option>
                   <option value="aprobado">Aprobados</option>
@@ -109,21 +114,21 @@ const App: React.FC = () => {
                     placeholder="Buscar por nombre o empresa"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
-                    className="w-full py-2 pl-10 pr-3 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full py-3 pl-12 pr-4 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   />
-                  <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                  <Search className="absolute left-4 top-3.5 h-6 w-6 text-gray-400" />
                 </div>
                 <input
                   type="date"
                   value={fechaInicio}
                   onChange={(e) => setFechaInicio(e.target.value)}
-                  className="w-1/4 py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-1/4 py-3 px-4 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
                 <input
                   type="date"
                   value={fechaFin}
                   onChange={(e) => setFechaFin(e.target.value)}
-                  className="w-1/4 py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-1/4 py-3 px-4 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
             </div>
@@ -147,7 +152,10 @@ const App: React.FC = () => {
                     datosIniciales={clienteEditando || undefined}
                   />
                 )}
-                <ResumenComisiones clientes={clientes} />
+                <ResumenComisiones 
+                  clientes={clientes}
+                  onMarcarTodasComisionesCobradas={handleMarcarTodasComisionesCobradas}
+                />
               </div>
             </div>
           </div>
