@@ -12,7 +12,7 @@ interface ListaClientesProps {
 
 const ListaClientes: React.FC<ListaClientesProps> = ({ clientes, onEditar, onEliminar, onActualizarEstado, onActualizarComision }) => {
   const [paginaActual, setPaginaActual] = useState(1);
-  const clientesPorPagina = 5;
+  const clientesPorPagina = 10;
 
   const indiceUltimoCliente = paginaActual * clientesPorPagina;
   const indicePrimerCliente = indiceUltimoCliente - clientesPorPagina;
@@ -92,7 +92,7 @@ const ListaClientes: React.FC<ListaClientesProps> = ({ clientes, onEditar, onEli
                       </button>
                     </>
                   )}
-                  {!cliente.comisionPagada && (
+                  {!cliente.comisionPagada && cliente.estadoCredito === 'aprobado' && (
                     <button
                       onClick={() => onActualizarComision(cliente.id, true)}
                       className="px-1 py-0.5 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600"

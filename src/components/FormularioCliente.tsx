@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Cliente } from '../types';
 
 interface FormularioClienteProps {
-  onSubmit: (cliente: Omit<Cliente, 'id' | 'fechaCreacion' | 'comision' | 'comisionPagada'>) => void;
-  datosIniciales?: Cliente;
+  onSubmit: (cliente: Cliente) => void;
+  datosIniciales?: Cliente | null;
 }
 
 const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIniciales }) => {
   const [formData, setFormData] = useState<Omit<Cliente, 'id' | 'fechaCreacion' | 'comision' | 'comisionPagada'>>({
-    nombre: datosIniciales?.nombre || '',
-    empresa: datosIniciales?.empresa || '',
-    montoCredito: datosIniciales?.montoCredito || 0,
-    estadoCredito: datosIniciales?.estadoCredito || 'pendiente',
+    nombre: '',
+    empresa: '',
+    montoCredito: 0,
+    estadoCredito: 'pendiente',
   });
+
+  useEffect(() => {
+    if (datosIniciales) {
+      setFormData({
+        nombre: datosIniciales.nombre,
+        empresa: datosIniciales.empresa,
+        montoCredito: datosIniciales.montoCredito,
+        estadoCredito: datosIniciales.estadoCredito,
+      });
+    } else {
+      setFormData({
+        nombre: '',
+        empresa: '',
+        montoCredito: 0,
+        estadoCredito: 'pendiente',
+      });
+    }
+  }, [datosIniciales]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -21,14 +39,22 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    const clienteSubmit: Cliente = {
+      ...formData,
+      id: datosIniciales?.id || Date.now().toString(),
+      fechaCreacion: datosIniciales?.fechaCreacion || new Date().toISOString(),
+      comision: formData.montoCredito * 0.02,
+      comisionPagada: datosIniciales?.comisionPagada || false,
+    };
+    onSubmit(clienteSubmit);
     if (!datosIniciales) {
       setFormData({ nombre: '', empresa: '', montoCredito: 0, estadoCredito: 'pendiente' });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-gray-50 p-6 rounded-lg shadow">
+      <h2 className="text-xl font-semibold mb-4">{datosIniciales ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h2>
       <div>
         <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre</label>
         <input
@@ -54,7 +80,7 @@ const FormularioCliente: React.FC<FormularioClienteProps> = ({ onSubmit, datosIn
         />
       </div>
       <div>
-        <label htmlFor="montoCredito" className="block text-sm font-medium text-gray-700">Monto de Crédito Aprobado</label>
+        <label htmlFor="montoCredito" className="block text-sm font-medium text-gray-700">Monto de Crédito</label>
         <input
           type="number"
           id="montoCredito"
