@@ -85,7 +85,7 @@ const App: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-5">
                 <CreditCard className="h-16 w-16 text-blue-500" />
-                <div className="text-3xl font-bold">Sistema de Gestión de Crédito</div>
+                <div className="text-3xl font-bold">Sistema de Gestión de Crédito 1.0</div>
               </div>
               <button
                 onClick={() => setMostrarFormulario(!mostrarFormulario)}
