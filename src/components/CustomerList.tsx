@@ -9,7 +9,12 @@ interface CustomerListProps {
   onUpdateStatus: (id: string, status: 'approved' | 'rejected') => void;
 }
 
-const CustomerList: React.FC<CustomerListProps> = ({ customers, onEdit, onDelete, onUpdateStatus }) => {
+const CustomerList: React.FC<CustomerListProps> = ({
+  customers,
+  onEdit,
+  onDelete,
+  onUpdateStatus,
+}) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white">
@@ -27,14 +32,21 @@ const CustomerList: React.FC<CustomerListProps> = ({ customers, onEdit, onDelete
             <tr key={customer.id} className="border-b">
               <td className="py-2 px-4">{customer.name}</td>
               <td className="py-2 px-4">{customer.company}</td>
-              <td className="py-2 px-4">${customer.approvedCreditAmount.toFixed(2)}</td>
               <td className="py-2 px-4">
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  customer.creditStatus === 'approved' ? 'bg-green-200 text-green-800' :
-                  customer.creditStatus === 'rejected' ? 'bg-red-200 text-red-800' :
-                  'bg-yellow-200 text-yellow-800'
-                }`}>
-                  {customer.creditStatus.charAt(0).toUpperCase() + customer.creditStatus.slice(1)}
+                ${customer.approvedCreditAmount.toFixed(2)}
+              </td>
+              <td className="py-2 px-4">
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    customer.creditStatus === 'approved'
+                      ? 'bg-green-200 text-green-800'
+                      : customer.creditStatus === 'rejected'
+                      ? 'bg-red-200 text-red-800'
+                      : 'bg-yellow-200 text-yellow-800'
+                  }`}
+                >
+                  {customer.creditStatus.charAt(0).toUpperCase() +
+                    customer.creditStatus.slice(1)}
                 </span>
               </td>
               <td className="py-2 px-4">

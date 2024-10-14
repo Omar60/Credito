@@ -6,7 +6,10 @@ interface CustomerFormProps {
   initialData?: Customer;
 }
 
-const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, initialData }) => {
+const CustomerForm: React.FC<CustomerFormProps> = ({
+  onSubmit,
+  initialData,
+}) => {
   const [formData, setFormData] = useState<Omit<Customer, 'id'>>({
     name: initialData?.name || '',
     company: initialData?.company || '',
@@ -14,23 +17,38 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, initialData }) =>
     creditStatus: initialData?.creditStatus || 'pending',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: name === 'approvedCreditAmount' ? Number(value) : value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'approvedCreditAmount' ? Number(value) : value,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
     if (!initialData) {
-      setFormData({ name: '', company: '', approvedCreditAmount: 0, creditStatus: 'pending' });
+      setFormData({
+        name: '',
+        company: '',
+        approvedCreditAmount: 0,
+        creditStatus: 'pending',
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Name
+        </label>
         <input
           type="text"
           id="name"
@@ -42,7 +60,12 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, initialData }) =>
         />
       </div>
       <div>
-        <label htmlFor="company" className="block text-sm font-medium text-gray-700">Company</label>
+        <label
+          htmlFor="company"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Company
+        </label>
         <input
           type="text"
           id="company"
@@ -54,7 +77,12 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, initialData }) =>
         />
       </div>
       <div>
-        <label htmlFor="approvedCreditAmount" className="block text-sm font-medium text-gray-700">Approved Credit Amount</label>
+        <label
+          htmlFor="approvedCreditAmount"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Approved Credit Amount
+        </label>
         <input
           type="number"
           id="approvedCreditAmount"
@@ -67,7 +95,12 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, initialData }) =>
         />
       </div>
       <div>
-        <label htmlFor="creditStatus" className="block text-sm font-medium text-gray-700">Credit Status</label>
+        <label
+          htmlFor="creditStatus"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Credit Status
+        </label>
         <select
           id="creditStatus"
           name="creditStatus"
