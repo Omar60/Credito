@@ -20,10 +20,10 @@ const App: React.FC = () => {
   const [mostrarResumenMensual, setMostrarResumenMensual] = useState(false);
   const [columnasMostradas, setColumnasMostradas] = useState({
     nombre: true,
-    empresa: true,
+    empresa: false,
     montoCredito: true,
     estadoCredito: true,
-    fechaCreacion: true,
+    fechaCreacion: false,
     comision: true,
   });
 
