@@ -28,7 +28,7 @@ const ListaClientes: React.FC<ListaClientesProps> = ({
   modoOscuro,
 }) => {
   const [paginaActual, setPaginaActual] = useState(1);
-  const clientesPorPagina = 10;
+  const clientesPorPagina = 20;
 
   const indiceUltimoCliente = paginaActual * clientesPorPagina;
   const indicePrimerCliente = indiceUltimoCliente - clientesPorPagina;
