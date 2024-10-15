@@ -45,24 +45,57 @@ const ListaClientes: React.FC<ListaClientesProps> = ({
 
   return (
     <div className="overflow-x-auto">
-      <table className={`min-w-full ${modoOscuro ? 'bg-gray-800 text-white' : 'bg-white'} text-base`}>
+      <table
+        className={`min-w-full ${
+          modoOscuro ? 'bg-gray-800 text-white' : 'bg-white'
+        } text-base`}
+      >
         <thead className={modoOscuro ? 'bg-gray-700' : 'bg-gray-100'}>
           <tr>
-            {columnasMostradas.nombre && <th className="py-3 px-4 text-left">Nombre</th>}
-            {columnasMostradas.empresa && <th className="py-3 px-4 text-left">Empresa</th>}
-            {columnasMostradas.montoCredito && <th className="py-3 px-4 text-left">Crédito</th>}
-            {columnasMostradas.estadoCredito && <th className="py-3 px-4 text-left">Estado</th>}
-            {columnasMostradas.fechaCreacion && <th className="py-3 px-4 text-left">Fecha Creación</th>}
-            {columnasMostradas.comision && <th className="py-3 px-4 text-left">Comisión</th>}
+            {columnasMostradas.nombre && (
+              <th className="py-3 px-4 text-left">Nombre</th>
+            )}
+            {columnasMostradas.empresa && (
+              <th className="py-3 px-4 text-left">Empresa</th>
+            )}
+            {columnasMostradas.montoCredito && (
+              <th className="py-3 px-4 text-left">Crédito</th>
+            )}
+            {columnasMostradas.plazo && (
+              <th className="py-3 px-4 text-left">Plazo</th>
+            )}
+            {columnasMostradas.estadoCredito && (
+              <th className="py-3 px-4 text-left">Estado</th>
+            )}
+            {columnasMostradas.fechaCreacion && (
+              <th className="py-3 px-4 text-left">Fecha Creación</th>
+            )}
+            {columnasMostradas.comision && (
+              <th className="py-3 px-4 text-left">Comisión</th>
+            )}
             <th className="py-3 px-4 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {clientesActuales.map((cliente) => (
-            <tr key={cliente.id} className={modoOscuro ? 'border-b border-gray-700' : 'border-b'}>
-              {columnasMostradas.nombre && <td className="py-3 px-4">{cliente.nombre}</td>}
-              {columnasMostradas.empresa && <td className="py-3 px-4">{cliente.empresa}</td>}
-              {columnasMostradas.montoCredito && <td className="py-3 px-4">${cliente.montoCredito.toFixed(2)}</td>}
+            <tr
+              key={cliente.id}
+              className={modoOscuro ? 'border-b border-gray-700' : 'border-b'}
+            >
+              {columnasMostradas.nombre && (
+                <td className="py-3 px-4">{cliente.nombre}</td>
+              )}
+              {columnasMostradas.empresa && (
+                <td className="py-3 px-4">{cliente.empresa}</td>
+              )}
+              {columnasMostradas.montoCredito && (
+                <td className="py-3 px-4">
+                  ${cliente.montoCredito.toFixed(2)}
+                </td>
+              )}
+              {columnasMostradas.plazo && (
+                <td className="py-3 px-4">{cliente.plazo} meses</td>
+              )}
               {columnasMostradas.estadoCredito && (
                 <td className="py-3 px-4">
                   <span
@@ -147,7 +180,11 @@ const ListaClientes: React.FC<ListaClientesProps> = ({
           ))}
         </tbody>
       </table>
-      <div className={`mt-6 flex justify-between items-center ${modoOscuro ? 'text-white' : 'text-gray-700'}`}>
+      <div
+        className={`mt-6 flex justify-between items-center ${
+          modoOscuro ? 'text-white' : 'text-gray-700'
+        }`}
+      >
         <span className="text-base">
           Mostrando {indicePrimerCliente + 1} -{' '}
           {Math.min(indiceUltimoCliente, clientes.length)} de {clientes.length}

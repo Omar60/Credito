@@ -37,7 +37,8 @@ const ResumenMensual: React.FC<ResumenMensualProps> = ({ clientes, modoOscuro })
     const clientesFiltrados = clientes.filter(cliente => {
       const fechaCliente = new Date(cliente.fechaCreacion);
       return fechaCliente.getFullYear() === parseInt(mesSeleccionado.split('-')[0]) &&
-             fechaCliente.getMonth() === parseInt(mesSeleccionado.split('-')[1]) - 1;
+             fechaCliente.getMonth() === parseInt(mesSeleccionado.split('-')[1]) - 1 &&
+             cliente.estadoCredito !== 'rechazado';
     });
 
     const totalClientes = clientesFiltrados.length;
@@ -46,6 +47,13 @@ const ResumenMensual: React.FC<ResumenMensualProps> = ({ clientes, modoOscuro })
     const creditosActivos = clientesFiltrados.filter(cliente => cliente.estadoCredito === 'aprobado').length;
     const clienteMaxCredito = clientesFiltrados.reduce((max, cliente) => 
       cliente.montoCredito > max.montoCredito ? cliente : max, clientesFiltrados[0]);
+    
+    const clientesAutorizados = clientesFiltrados.filter(cliente => cliente.estadoCredito === 'aprobado').length;
+    const clientesRechazados = clientes.filter(cliente => 
+      new Date(cliente.fechaCreacion).getFullYear() === parseInt(mesSeleccionado.split('-')[0]) &&
+      new Date(cliente.fechaCreacion).getMonth() === parseInt(mesSeleccionado.split('-')[1]) - 1 &&
+      cliente.estadoCredito === 'rechazado'
+    ).length;
 
     return {
       totalClientes,
@@ -53,18 +61,26 @@ const ResumenMensual: React.FC<ResumenMensualProps> = ({ clientes, modoOscuro })
       totalComisiones,
       creditosActivos,
       clienteMaxCredito,
+      clientesAutorizados,
+      clientesRechazados,
     };
   }, [clientes, mesSeleccionado]);
 
   const chartData = {
-    labels: ['Total Clientes', 'Créditos Activos', 'Cliente Max Crédito'],
+    labels: ['Total Clientes', 'Créditos Activos', 'Cliente Max Crédito', 'Autorizados', 'Rechazados'],
     datasets: [
       {
         label: 'Estadísticas',
-        data: [estadisticas.totalClientes, estadisticas.creditosActivos, estadisticas.clienteMaxCredito?.montoCredito || 0],
+        data: [
+          estadisticas.totalClientes,
+          estadisticas.creditosActivos,
+          estadisticas.clienteMaxCredito?.montoCredito || 0,
+          estadisticas.clientesAutorizados,
+          estadisticas.clientesRechazados
+        ],
         backgroundColor: modoOscuro 
-          ? ['rgba(75, 192, 192, 0.8)', 'rgba(153, 102, 255, 0.8)', 'rgba(255, 159, 64, 0.8)']
-          : ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+          ? ['rgba(75, 192, 192, 0.8)', 'rgba(153, 102, 255, 0.8)', 'rgba(255, 159, 64, 0.8)', 'rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)']
+          : ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)'],
       },
     ],
   };
@@ -142,6 +158,14 @@ const ResumenMensual: React.FC<ResumenMensualProps> = ({ clientes, modoOscuro })
           <div>
             <p className="font-semibold">Créditos Activos:</p>
             <p className="text-xl">{estadisticas.creditosActivos}</p>
+          </div>
+          <div>
+            <p className="font-semibold">Clientes Autorizados:</p>
+            <p className="text-xl">{estadisticas.clientesAutorizados}</p>
+          </div>
+          <div>
+            <p className="font-semibold">Clientes Rechazados:</p>
+            <p className="text-xl">{estadisticas.clientesRechazados}</p>
           </div>
           <div className="col-span-2">
             <p className="font-semibold">Cliente con Mayor Crédito:</p>

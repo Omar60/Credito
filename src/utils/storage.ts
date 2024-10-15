@@ -34,6 +34,7 @@ const esClienteValido = (cliente: any): boolean => {
     typeof cliente.nombre === 'string' &&
     typeof cliente.empresa === 'string' &&
     typeof cliente.montoCredito === 'number' &&
+    typeof cliente.plazo === 'number' &&
     ['aprobado', 'rechazado', 'pendiente'].includes(cliente.estadoCredito) &&
     typeof cliente.fechaCreacion === 'string' &&
     typeof cliente.comision === 'number' &&
