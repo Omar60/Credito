@@ -32,10 +32,10 @@ const ListaClientes: React.FC<ListaClientesProps> = ({
 
   const indiceUltimoCliente = paginaActual * clientesPorPagina;
   const indicePrimerCliente = indiceUltimoCliente - clientesPorPagina;
-  const clientesActuales = clientes.slice(
-    indicePrimerCliente,
-    indiceUltimoCliente
-  );
+  const clientesActuales = clientes.slice()
+  .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
+  .slice(indicePrimerCliente, indiceUltimoCliente);
+
 
   const totalPaginas = Math.ceil(clientes.length / clientesPorPagina);
 
