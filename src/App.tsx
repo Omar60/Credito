@@ -11,15 +11,12 @@ import {
   Sun,
   Download,
   Upload,
-  FileText,FileSpreadsheet,
+  FileText,
+  FileSpreadsheet,
 } from 'lucide-react';
-import {
-  saveClientes,
-  loadClientes,
-  exportarDatos,
-  importarDatos,
-} from './utils/storage';
+import { exportarDatos, importarDatos } from './utils/storage';
 import { exportToPDF, exportToExcel } from './utils/exportUtils';
+import { fetchClientes, createCliente, updateCliente, deleteCliente } from './utils/api';
 
 const App: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -44,10 +41,7 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    const clientesGuardados = loadClientes();
-    if (clientesGuardados) {
-      setClientes(clientesGuardados);
-    }
+    cargarClientes();
     const modoOscuroGuardado = localStorage.getItem('modoOscuro');
     if (modoOscuroGuardado === null) {
       setModoOscuro(true);
@@ -55,10 +49,6 @@ const App: React.FC = () => {
       setModoOscuro(JSON.parse(modoOscuroGuardado));
     }
   }, []);
-
-  useEffect(() => {
-    saveClientes(clientes);
-  }, [clientes]);
 
   useEffect(() => {
     localStorage.setItem('modoOscuro', JSON.stringify(modoOscuro));
@@ -69,48 +59,83 @@ const App: React.FC = () => {
     }
   }, [modoOscuro]);
 
-  const handleAgregarCliente = (nuevoCliente: Cliente) => {
-    setClientes([...clientes, nuevoCliente]);
-    setMostrarFormulario(false);
+  const cargarClientes = async () => {
+    try {
+      const clientesData = await fetchClientes();
+      setClientes(clientesData);
+    } catch (error) {
+      console.error('Error al cargar los clientes:', error);
+    }
   };
 
-  const handleActualizarCliente = (clienteActualizado: Cliente) => {
-    setClientes(
-      clientes.map((c) =>
-        c.id === clienteActualizado.id ? clienteActualizado : c
-      )
-    );
-    setClienteEditando(null);
-    setMostrarFormulario(false);
+  const handleAgregarCliente = async (nuevoCliente: Cliente) => {
+    try {
+      await createCliente(nuevoCliente);
+      await cargarClientes();
+      setMostrarFormulario(false);
+    } catch (error) {
+      console.error('Error al agregar el cliente:', error);
+    }
   };
 
-  const handleEliminarCliente = (id: string) => {
-    setClientes(clientes.filter((c) => c.id !== id));
+  const handleActualizarCliente = async (clienteActualizado: Cliente) => {
+    try {
+      await updateCliente(clienteActualizado);
+      await cargarClientes();
+      setClienteEditando(null);
+      setMostrarFormulario(false);
+    } catch (error) {
+      console.error('Error al actualizar el cliente:', error);
+    }
   };
 
-  const handleActualizarEstado = (
+  const handleEliminarCliente = async (id: string) => {
+    try {
+      await deleteCliente(id);
+      await cargarClientes();
+    } catch (error) {
+      console.error('Error al eliminar el cliente:', error);
+    }
+  };
+
+  const handleActualizarEstado = async (
     id: string,
     estado: 'aprobado' | 'rechazado'
   ) => {
-    setClientes(
-      clientes.map((c) => {
-        if (c.id === id) {
-          const comision = estado === 'rechazado' ? 0 : c.montoCredito * 0.02;
-          return { ...c, estadoCredito: estado, comision };
-        }
-        return c;
-      })
-    );
+    const clienteActualizar = clientes.find((c) => c.id === id);
+    if (clienteActualizar) {
+      const comision = estado === 'rechazado' ? 0 : clienteActualizar.montoCredito * 0.02;
+      const clienteActualizado = { ...clienteActualizar, estadoCredito: estado, comision };
+      try {
+        await updateCliente(clienteActualizado);
+        await cargarClientes();
+      } catch (error) {
+        console.error('Error al actualizar el estado del cliente:', error);
+      }
+    }
   };
 
-  const handleActualizarComision = (id: string, pagada: boolean) => {
-    setClientes(
-      clientes.map((c) => (c.id === id ? { ...c, comisionPagada: pagada } : c))
-    );
+  const handleActualizarComision = async (id: string, pagada: boolean) => {
+    const clienteActualizar = clientes.find((c) => c.id === id);
+    if (clienteActualizar) {
+      const clienteActualizado = { ...clienteActualizar, comisionPagada: pagada };
+      try {
+        await updateCliente(clienteActualizado);
+        await cargarClientes();
+      } catch (error) {
+        console.error('Error al actualizar la comisión del cliente:', error);
+      }
+    }
   };
 
-  const handleMarcarTodasComisionesCobradas = () => {
-    setClientes(clientes.map((c) => ({ ...c, comisionPagada: true })));
+  const handleMarcarTodasComisionesCobradas = async () => {
+    const clientesActualizados = clientes.map((c) => ({ ...c, comisionPagada: true }));
+    try {
+      await Promise.all(clientesActualizados.map(updateCliente));
+      await cargarClientes();
+    } catch (error) {
+      console.error('Error al marcar todas las comisiones como cobradas:', error);
+    }
   };
 
   const handleExportarDatos = () => {
@@ -126,15 +151,22 @@ const App: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const handleImportarDatos = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImportarDatos = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const contenido = e.target?.result as string;
         if (importarDatos(contenido)) {
-          setClientes(loadClientes());
-          alert('Datos importados correctamente');
+          try {
+            const clientesImportados = JSON.parse(contenido);
+            await Promise.all(clientesImportados.map(createCliente));
+            await cargarClientes();
+            alert('Datos importados correctamente');
+          } catch (error) {
+            console.error('Error al importar datos:', error);
+            alert('Error al importar datos. Verifique el formato del archivo.');
+          }
         } else {
           alert('Error al importar datos. Verifique el formato del archivo.');
         }
