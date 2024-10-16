@@ -36,6 +36,8 @@ jobs:
           node-version: 20
           cache: 'npm'
       - name: Install dependencies
+        run: npm install express sqlite3 sqlite concurrently @types/express
+      - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run build
